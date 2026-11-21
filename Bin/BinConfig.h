@@ -47,11 +47,8 @@
 #define BIN_KEY_DEBOUNCE_TICKS  (BIN_KEY_DEBOUNCE_MS / BIN_LOOP_MS)
 
 /* ---------------- 功能开关 ---------------------------------------- */
-#define BIN_USE_UART            0       /* 串口上报（PB10/PB11, 115200），不用就 0 */
 #define BIN_USE_IWDG            1       /* 独立看门狗，1 秒不喂狗就复位 */
 #define BIN_USE_IDLE_SLEEP      0       /* 空闲进 Sleep，默认关 */
-#define BIN_UART_BAUD           115200u
-#define BIN_TELEMETRY_MS        5000u   /* 心跳上报周期 */
 
 /* 上电舵机自检：设为 1 时，开机画面结束后舵机会 0°->90°->0° 摆一次，
  * 用来确认"舵机 + PWM + 供电"这条通路是好的。

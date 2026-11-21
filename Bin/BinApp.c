@@ -3,12 +3,10 @@
 #include "BinConfig.h"
 #include "BinSensor.h"
 #include "BinUi.h"
-#include "BinTelemetry.h"
 #include "Servo.h"
 #include "LED.h"
 #include "beep.h"
 #include "OLED.h"
-#include "UART.h"
 #include "systick.h"
 
 /* ==================================================================
@@ -24,8 +22,7 @@
  *   光路恢复 2 秒          -> 解除满
  *
  * 全部非阻塞：主循环 10ms 一拍，用 sys_ms 做时间基准。
- * 界面和串口上报各自在 BinUi.c / BinTelemetry.c 里，
- * 这个文件只管"什么时候开、什么时候关、什么时候报警"。
+ * 界面在 BinUi.c 里，这个文件只管"什么时候开、什么时候关、什么时候报警"。
  * ================================================================== */
 
 typedef enum
@@ -52,8 +49,6 @@ static uint8_t    s_beep_seg;       /* 0 = 静音段，1 = 鸣叫段 */
 static uint32_t   s_beep_tick;
 
 static uint32_t   s_throw_cnt;      /* 投放次数（对射被短暂遮挡） */
-
-static uint32_t   s_tel_tick;       /* 上一次心跳上报 */
 static uint32_t   s_ui_tick;        /* 上一次刷屏 */
 
 /* ==================================================================
@@ -70,14 +65,12 @@ static void lid_close(void)
     if (BinSensor_Hand()) s_wait_release = 1;
 }
 
-/* why: "IR" / "KEY"，只用于串口日志 */
-static void lid_open(const char *why)
+static void lid_open(void)
 {
     if (s_lid == LID_CLOSED)
     {
         Servo_SetAngle(BIN_SERVO_OPEN_DEG);
         s_open_cnt++;
-        BinTelemetry_LidOpen(why, s_open_cnt);
     }
 
     s_lid      = LID_OPEN;
@@ -120,11 +113,11 @@ static void tick_10ms(void)
         /* ---------- 1. 开盖触发 ---------- */
         if (BinSensor_KeyPressed())                 /* 手动按键：强制开盖 3 秒 */
         {
-            lid_open("KEY");
+            lid_open();
         }
         else if (hand && s_lid == LID_CLOSED && !s_wait_release)
         {
-            lid_open("IR");                         /* 红外感应到人：开盖 */
+            lid_open();                             /* 红外感应到人：开盖 */
         }
 
 #if BIN_LID_KEEP_OPEN_WHILE_HAND
@@ -140,7 +133,6 @@ static void tick_10ms(void)
         if (s_lid == LID_OPEN && (now - s_lid_tick) >= BIN_LID_HOLD_MS)
         {
             lid_close();
-            BinTelemetry_Event("CLOSE");
         }
     }
 
@@ -155,7 +147,6 @@ static void tick_10ms(void)
             s_full      = 1;
             s_beep_seg  = 1;            /* 立刻进入"响"的那一段，不要先干等 800ms */
             s_beep_tick = now;
-            BinTelemetry_Event("FULL");
         }
     }
     else
@@ -164,7 +155,6 @@ static void tick_10ms(void)
         if (s_full && (now - s_last_block_tick) >= BIN_FULL_CLEAR_MS)
         {
             s_full = 0;
-            BinTelemetry_Event("CLEAR");
         }
     }
 
@@ -179,7 +169,6 @@ static void tick_10ms(void)
             (now - s_throw_tick) < BIN_FULL_CONFIRM_MS)
         {
             s_throw_cnt++;
-            BinTelemetry_Event("THROW");
         }
     }
     s_beam_prev = beam;
@@ -205,13 +194,6 @@ static void tick_10ms(void)
         Beep_Off();
         s_beep_seg  = 0;
         s_beep_tick = now;
-    }
-
-    /* ---------- 6. 心跳上报 ---------- */
-    if ((now - s_tel_tick) >= BIN_TELEMETRY_MS)
-    {
-        s_tel_tick = now;
-        BinTelemetry_Heartbeat((uint8_t)s_lid, s_full, s_open_cnt, s_throw_cnt);
     }
 }
 
@@ -261,11 +243,6 @@ void BinApp_Init(void)
     BinUi_Clear();
 #endif
 
-#if BIN_USE_UART
-    USART3_Init(BIN_UART_BAUD);
-    BinTelemetry_Boot();
-#endif
-
     /* 关盖 + 状态初始化 */
     Servo_SetAngle(BIN_SERVO_CLOSED_DEG);
     s_lid             = LID_CLOSED;
@@ -280,7 +257,6 @@ void BinApp_Init(void)
     s_beep_seg        = 0;
     s_beep_tick       = sys_ms;
     s_throw_cnt       = 0;
-    s_tel_tick        = sys_ms;
     s_ui_tick         = sys_ms - BIN_UI_REFRESH_MS;
 
     wdt_init();

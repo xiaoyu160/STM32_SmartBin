@@ -19,7 +19,6 @@ STM32F103C8T6 @72MHz。红外感应到人 → 舵机开盖 → 保持 3 秒自�
 | 舵机 SG90 | PA8 | — | TIM1_CH1，50Hz，**必须 5V 独立供电并与开发板共地** |
 | OLED SCL | PB8 | — | 软件 I2C，开漏 |
 | OLED SDA | PB9 | — | 软件 I2C，开漏 |
-| 串口 USART3 | PB10 / PB11 | — | TX / RX，115200（可选） |
 
 两路红外的有效电平按模块而定。上电看 OLED 第 3 行的 `RAW` 值：
 挡住光路时 `RAW` 会翻转，但第 1 行不出【桶已满】，就是 `BOARD_IR_FULL_ACTIVE` 填反了。
@@ -33,12 +32,10 @@ Bin/            应用层，按职责分层
   BinApp.c        状态机：什么时候开、什么时候关、什么时候报警
   BinSensor.c     2 路红外 + 按键，周期采样 + 计数去抖
   BinUi.c         OLED 界面，只接收 BinUiFrame_t，不持有状态
-  BinTelemetry.c  串口上报
   BinFmt.c        极简整数格式化（不用 printf）
 Led/ Beep/       PA0 / PA4 单引脚驱动
 Servo/           TIM1 PWM 舵机驱动
 Oled/            SSD1306 软件 I2C 驱动与字库
-Uart/            USART3 单向发送
 System/          SysTick 1ms 时基
 User/            main.c、中断向量、标准外设库配置
 Library/ Start/  ST 标准外设库与启动文件（原样保留）
@@ -64,22 +61,7 @@ UV4.exe -b Smart_bin.uvprojx -j0 -o build.log
 | `BIN_FULL_CLEAR_MS` | 2000 | 恢复多久后解除（清空垃圾） |
 | `BIN_BEEP_ON_MS` / `_OFF_MS` | 200 / 800 | 报警间歇节奏 |
 | `BIN_LID_KEEP_OPEN_WHILE_HAND` | 0 | 1 = 手不离开就一直续期 |
-| `BIN_USE_UART` | 0 | 1 = 打开串口上报 |
 | `BIN_USE_IWDG` | 1 | 独立看门狗，1 秒不喂狗复位 |
-
-## 串口输出（`BIN_USE_UART = 1` 时）
-
-```
-BIN,BOOT,SmartBin v1.0
-EVT,OPEN,IR,cnt=3
-EVT,CLOSE
-EVT,THROW
-EVT,FULL / EVT,CLEAR
-BIN,lid=0,full=0,open=3,throw=2,up=125s     每 5 秒一条心跳
-```
-
-只发不收。串口接收若要做命令控制，应把字节收进环形缓冲交给主循环解析，
-不要在中断里解析和回包。
 
 ## 上电自检顺序
 

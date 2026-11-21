@@ -68,9 +68,4 @@
 #define BOARD_OLED_SCL_PIN      GPIO_Pin_8
 #define BOARD_OLED_SDA_PIN      GPIO_Pin_9
 
-/* 串口 USART3 */
-#define BOARD_UART_PORT         GPIOB
-#define BOARD_UART_TX_PIN       GPIO_Pin_10
-#define BOARD_UART_RX_PIN       GPIO_Pin_11
-
 #endif

@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Library;.\Start;.\System;.\User;.\Bin;.\Led;.\Beep;.\Oled;.\Servo;.\Uart</IncludePath>
+              <IncludePath>.\Library;.\Start;.\System;.\User;.\Bin;.\Led;.\Beep;.\Oled;.\Servo</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -751,16 +751,6 @@
               <FilePath>.\Bin\BinUi.h</FilePath>
             </File>
             <File>
-              <FileName>BinTelemetry.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Bin\BinTelemetry.c</FilePath>
-            </File>
-            <File>
-              <FileName>BinTelemetry.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Bin\BinTelemetry.h</FilePath>
-            </File>
-            <File>
               <FileName>BinFmt.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Bin\BinFmt.c</FilePath>
@@ -819,21 +809,6 @@
               <FileName>Servo.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Servo\Servo.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Uart</GroupName>
-          <Files>
-            <File>
-              <FileName>UART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Uart\UART.c</FilePath>
-            </File>
-            <File>
-              <FileName>UART.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Uart\UART.h</FilePath>
             </File>
           </Files>
         </Group>
