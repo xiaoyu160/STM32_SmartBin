@@ -135,15 +135,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	sys_ms++;
-	tick_cnt++;
-	if(tick_cnt%10 == 0) flag_10ms = 1;
-	if(tick_cnt%100 == 0) flag_100ms =1;
-	if(tick_cnt%1000 == 0)
-	{
-		flag_1s =1;
-		tick_cnt = 0;
-	}
+	sys_ms++;			/* 1ms 自增，主循环靠它算超时 */
 }
 
 /******************************************************************************/

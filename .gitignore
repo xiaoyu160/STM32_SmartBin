@@ -1,0 +1,18 @@
+# Keil / µVision 构建产物
+Objects/
+Listings/
+*.dep
+*.crf
+*.o
+*.d
+*.axf
+*.lnp
+*.map
+*.lst
+*.htm
+*.build_log.htm
+
+# 本机 IDE 布局，跟具体电脑有关，不要入库
+*.uvguix.*
+*.uvoptx.bak
+*.bak

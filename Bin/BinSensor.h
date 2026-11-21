@@ -17,9 +17,7 @@ void    BinSensor_Update(void);     /* 必须每 10ms 调一次 */
 
 uint8_t BinSensor_Hand(void);       /* 1 = 投放口检测到手/物体 */
 uint8_t BinSensor_Full(void);       /* 1 = 对射光路被挡住（垃圾到口） */
-uint8_t BinSensor_Key(void);        /* 1 = 按键稳定按下 */
 uint8_t BinSensor_KeyPressed(void); /* 1 = 本次扫描出现"按下"边沿，读后自动清零 */
-uint8_t BinSensor_RawHand(void);    /* 未去抖的电平，调试用 */
 uint8_t BinSensor_RawFull(void);    /* 未去抖的电平，调试用 */
 
 #endif

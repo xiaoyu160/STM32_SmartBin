@@ -1,48 +1,29 @@
 #include "stm32f10x.h"
 #include "beep.h"
-#include "key.h"
+#include "BoardConfig.h"
+
+/* 板载蜂鸣器：低电平响（极性见 BoardConfig.h 的 BOARD_BEEP_ACTIVE） */
+
+static void beep_write(uint8_t on)
+{
+    BitAction level = on ? (BitAction)BOARD_BEEP_ACTIVE
+                         : (BitAction)(!BOARD_BEEP_ACTIVE);
+    GPIO_WriteBit(BOARD_BEEP_PORT, BOARD_BEEP_PIN, level);
+}
 
 void Beep_Init(void)
 {
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-	GPIO_InitTypeDef GPIO_InitStructure;
-  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Pin   = BEEP_PIN;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(BEEP_PORT, &GPIO_InitStructure);
-	
-	GPIO_SetBits(BEEP_PORT, BEEP_PIN);
+    GPIO_InitTypeDef gpio;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+    gpio.GPIO_Mode  = GPIO_Mode_Out_PP;
+    gpio.GPIO_Speed = GPIO_Speed_50MHz;
+    gpio.GPIO_Pin   = BOARD_BEEP_PIN;
+    GPIO_Init(BOARD_BEEP_PORT, &gpio);
+
+    Beep_Off();
 }
 
-void Beep_On(void)
-{
-    GPIO_ResetBits(BEEP_PORT, BEEP_PIN);                 // �ߵ�ƽ�죨����·�ɷ�ת��
-}
-
-void Beep_Off(void)
-{
-    GPIO_SetBits(BEEP_PORT, BEEP_PIN);
-}
-
-void Beep_Toggle(void)
-{
-    if (GPIO_ReadOutputDataBit(BEEP_PORT, BEEP_PIN) == Bit_SET)
-        GPIO_ResetBits(BEEP_PORT, BEEP_PIN);
-    else
-        GPIO_SetBits(BEEP_PORT, BEEP_PIN);
-}
-
-void Beep_Demo(void)
-{
-	KEY_INIT();
-	Beep_Init();
-	
-	while(1)
-	{
-		int key = key_scan();
-		if(key == 3)
-		{
-			GPIO_ResetBits(BEEP_PORT, BEEP_PIN);
-		}
-	}
-}
+void Beep_On(void)  { beep_write(1); }
+void Beep_Off(void) { beep_write(0); }

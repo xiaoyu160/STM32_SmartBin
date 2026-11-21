@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Library;.\Start;.\System;.\User;.\Beep;.\Bin;.\Led;.\Oled;.\Servo;.\Uart;.\Key;.\Encoder</IncludePath>
+              <IncludePath>.\Library;.\Start;.\System;.\User;.\Bin;.\Led;.\Beep;.\Oled;.\Servo;.\Uart</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -656,16 +656,6 @@
           <GroupName>System</GroupName>
           <Files>
             <File>
-              <FileName>Delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\System\Delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>Delay.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\System\Delay.h</FilePath>
-            </File>
-            <File>
               <FileName>systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\System\systick.c</FilePath>
@@ -721,6 +711,16 @@
           <GroupName>Bin</GroupName>
           <Files>
             <File>
+              <FileName>BoardConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Bin\BoardConfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>BinConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Bin\BinConfig.h</FilePath>
+            </File>
+            <File>
               <FileName>BinApp.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Bin\BinApp.c</FilePath>
@@ -731,11 +731,6 @@
               <FilePath>.\Bin\BinApp.h</FilePath>
             </File>
             <File>
-              <FileName>BinConfig.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Bin\BinConfig.h</FilePath>
-            </File>
-            <File>
               <FileName>BinSensor.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Bin\BinSensor.c</FilePath>
@@ -744,6 +739,36 @@
               <FileName>BinSensor.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Bin\BinSensor.h</FilePath>
+            </File>
+            <File>
+              <FileName>BinUi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Bin\BinUi.c</FilePath>
+            </File>
+            <File>
+              <FileName>BinUi.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Bin\BinUi.h</FilePath>
+            </File>
+            <File>
+              <FileName>BinTelemetry.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Bin\BinTelemetry.c</FilePath>
+            </File>
+            <File>
+              <FileName>BinTelemetry.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Bin\BinTelemetry.h</FilePath>
+            </File>
+            <File>
+              <FileName>BinFmt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Bin\BinFmt.c</FilePath>
+            </File>
+            <File>
+              <FileName>BinFmt.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Bin\BinFmt.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -809,46 +834,6 @@
               <FileName>UART.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Uart\UART.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Key</GroupName>
-          <Files>
-            <File>
-              <FileName>key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Key\key.c</FilePath>
-            </File>
-            <File>
-              <FileName>key.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Key\key.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Encoder</GroupName>
-          <Files>
-            <File>
-              <FileName>Encoder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Encoder\Encoder.c</FilePath>
-            </File>
-            <File>
-              <FileName>Encoder.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Encoder\Encoder.h</FilePath>
-            </File>
-            <File>
-              <FileName>Encoder_TIM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Encoder\Encoder_TIM.c</FilePath>
-            </File>
-            <File>
-              <FileName>Encoder_TIM.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Encoder\Encoder_TIM.h</FilePath>
             </File>
           </Files>
         </Group>

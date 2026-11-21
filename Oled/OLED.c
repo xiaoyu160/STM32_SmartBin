@@ -1,9 +1,10 @@
 #include "stm32f10x.h"
 #include "OLED_Font.h"
+#include "BoardConfig.h"
 
-/*引脚配置*/
-#define OLED_W_SCL(x)		GPIO_WriteBit(GPIOB, GPIO_Pin_8, (BitAction)(x))
-#define OLED_W_SDA(x)		GPIO_WriteBit(GPIOB, GPIO_Pin_9, (BitAction)(x))
+/* 软件 I2C 引脚：见 BoardConfig.h（默认 PB8 = SCL，PB9 = SDA） */
+#define OLED_W_SCL(x)		GPIO_WriteBit(BOARD_OLED_PORT, BOARD_OLED_SCL_PIN, (BitAction)(x))
+#define OLED_W_SDA(x)		GPIO_WriteBit(BOARD_OLED_PORT, BOARD_OLED_SDA_PIN, (BitAction)(x))
 
 /*引脚初始化*/
 void OLED_I2C_Init(void)
@@ -13,10 +14,10 @@ void OLED_I2C_Init(void)
 	GPIO_InitTypeDef GPIO_InitStructure;
  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = BOARD_OLED_SCL_PIN;
+ 	GPIO_Init(BOARD_OLED_PORT, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = BOARD_OLED_SDA_PIN;
+ 	GPIO_Init(BOARD_OLED_PORT, &GPIO_InitStructure);
 	
 	OLED_W_SCL(1);
 	OLED_W_SDA(1);
@@ -153,7 +154,7 @@ void OLED_ShowChar(uint8_t Line, uint8_t Column, char Char)
   * @param  String 要显示的字符串，范围：ASCII可见字符
   * @retval 无
   */
-void OLED_ShowString(uint8_t Line, uint8_t Column, char *String)
+void OLED_ShowString(uint8_t Line, uint8_t Column, const char *String)
 {
 	uint8_t i;
 	for (i = 0; String[i] != '\0'; i++)
@@ -222,48 +223,6 @@ void OLED_ShowSignedNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Le
 }
 
 /**
-  * @brief  OLED显示数字（十六进制，正数）
-  * @param  Line 起始行位置，范围：1~4
-  * @param  Column 起始列位置，范围：1~16
-  * @param  Number 要显示的数字，范围：0~0xFFFFFFFF
-  * @param  Length 要显示数字的长度，范围：1~8
-  * @retval 无
-  */
-void OLED_ShowHexNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length)
-{
-	uint8_t i, SingleNumber;
-	for (i = 0; i < Length; i++)							
-	{
-		SingleNumber = Number / OLED_Pow(16, Length - i - 1) % 16;
-		if (SingleNumber < 10)
-		{
-			OLED_ShowChar(Line, Column + i, SingleNumber + '0');
-		}
-		else
-		{
-			OLED_ShowChar(Line, Column + i, SingleNumber - 10 + 'A');
-		}
-	}
-}
-
-/**
-  * @brief  OLED显示数字（二进制，正数）
-  * @param  Line 起始行位置，范围：1~4
-  * @param  Column 起始列位置，范围：1~16
-  * @param  Number 要显示的数字，范围：0~1111 1111 1111 1111
-  * @param  Length 要显示数字的长度，范围：1~16
-  * @retval 无
-  */
-void OLED_ShowBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length)
-{
-	uint8_t i;
-	for (i = 0; i < Length; i++)							
-	{
-		OLED_ShowChar(Line, Column + i, Number / OLED_Pow(2, Length - i - 1) % 2 + '0');
-	}
-}
-
-/**
   * @brief  OLED初始化
   * @param  无
   * @retval 无
@@ -328,39 +287,4 @@ void OLED_ShowChinese(uint8_t Line, uint8_t Column, uint8_t Index)
   for (i = 0; i < 16; i++) OLED_WriteData(OLED_Chinese[Index][i]);
   OLED_SetCursor((Line - 1) * 2 + 1, (Column - 1) * 16);
   for (i = 0; i < 16; i++) OLED_WriteData(OLED_Chinese[Index][i + 16]);
-}
-
-void OLED_ShowChineseString(void)
-{
-	OLED_ShowChinese(1, 3, 0);
-	OLED_ShowChinese(1, 4, 1);
-	OLED_ShowChinese(1, 5, 2);
-	OLED_ShowChinese(1, 6, 3);
-}
-
-// 64x64 图片：x=起始列(0~63)，y=起始页(0~7)，idx=图片序号
-void OLED_ShowPictrue(uint8_t x, uint8_t y, uint8_t idx)
-{
-    uint8_t i, j;
-    for (j = 0; j < 8; j++)            // 8 页
-    {
-        OLED_SetCursor(y - 1 + j, x - 1);
-        for (i = 0; i < 64; i++)       // 每页 64 列
-            OLED_WriteData(OLED_Pictrue[idx * 8 + j][i]);
-    }
-}
-
-
-void OLED_demo(void)
-{
-	OLED_Init();
-	
-//	OLED_ShowChar(1, 1, 'A');
-//	OLED_ShowString(1, 3, "HelloWorld!");
-//	OLED_ShowChineseString();
-//	OLED_ShowNum(2, 1, 12345, 5);
-//	OLED_ShowSignedNum(2, 7, -66, 2);
-//	OLED_ShowHexNum(3, 1, 0xAA55, 4);
-//	OLED_ShowBinNum(4, 1, 0xAA55, 16);
-	OLED_ShowPictrue(1, 1, 0);
 }

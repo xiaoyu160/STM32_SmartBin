@@ -1,45 +1,28 @@
 #include "stm32f10x.h"
 #include "systick.h"
-#include "LED.h"
+
+/* 1ms 系统时基
+ *
+ * 全工程的"当前时间"只有 sys_ms 这一个来源：中断里自增，
+ * 主循环用 (sys_ms - 起点) >= 周期 判断超时，不做阻塞等待。
+ * 无符号减法在溢出时依然正确，所以 49 天不用管。 */
 
 volatile uint32_t sys_ms = 0;
-volatile uint16_t tick_cnt = 0;
-volatile uint8_t flag_10ms = 0;
-volatile uint8_t flag_100ms = 0;
-volatile uint8_t flag_1s = 0;
 
 void SysTick_Init(void)
 {
-	if(SysTick_Config(SystemCoreClock / 1000))
-	{
-		while(1);
-	}
+    if (SysTick_Config(SystemCoreClock / 1000))
+    {
+        while (1);          /* 配置失败说明系统时钟不对，停在这里等调试器 */
+    }
 }
 
-void SysTick_Demo(void)
+/* 基于 sys_ms 的阻塞延时，只能在 SysTick_Init() 之后调用。
+ * 仅用于开机画面这类"还没进主循环、不需要并行处理"的场合。 */
+void SysTick_DelayMs(uint32_t ms)
 {
-	LED_INIT();
-	SysTick_Init();
-	
-	while (1)
-	{
-		if(flag_10ms == 1)
-		{
-			GPIO_WriteBit(LED_PORT, LED_PIN_0, (BitAction)!GPIO_ReadOutputDataBit(LED_PORT, LED_PIN_0));
-//			GPIO_ResetBits(LED_PORT, LED_PIN_0);
-			flag_10ms = 0;
-		}
-		if(flag_100ms == 1)
-		{
-			GPIO_WriteBit(LED_PORT, LED_PIN_1, (BitAction)!GPIO_ReadOutputDataBit(LED_PORT, LED_PIN_1));
-//			GPIO_ResetBits(LED_PORT, LED_PIN_1);
-			flag_100ms = 0;
-		}
-		if(flag_1s == 1)
-		{
-			GPIO_WriteBit(LED_PORT, LED_PIN_2, (BitAction)!GPIO_ReadOutputDataBit(LED_PORT, LED_PIN_2));
-//			GPIO_ResetBits(LED_PORT, LED_PIN_2);
-			flag_1s = 0;
-		}
-	}
+    uint32_t start = sys_ms;
+    while ((sys_ms - start) < ms)
+    {
+    }
 }
