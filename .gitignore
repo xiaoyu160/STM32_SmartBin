@@ -11,8 +11,12 @@ Listings/
 *.lst
 *.htm
 *.build_log.htm
+*.log
 
 # 本机 IDE 布局，跟具体电脑有关，不要入库
 *.uvguix.*
 *.uvoptx.bak
 *.bak
+
+# 工作区本地数据（记忆/日志），不入库
+.workbuddy/

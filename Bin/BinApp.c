@@ -7,6 +7,7 @@
 #include "Servo.h"
 #include "LED.h"
 #include "beep.h"
+#include "OLED.h"
 #include "UART.h"
 #include "systick.h"
 
@@ -246,6 +247,7 @@ void BinApp_Init(void)
     Servo_Init();                       /* PA8, 50Hz, 先输出 0.5ms(0°) */
     Beep_Init();                        /* PA4 推挽，默认不响 */
     LED_Init();                         /* PA0，只动这一根脚 */
+    OLED_Init();                        /* PB8/PB9 软件 I2C，内部含上电延时 */
     SysTick_Init();                     /* 先建立 1ms 时基，后面一律用 sys_ms */
 
     BinUi_Splash();                     /* 开机画面，内部等待 800ms */
